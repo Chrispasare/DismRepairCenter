@@ -113,7 +113,7 @@ public static class Loc
         ["Source"] = "Source for Repair (optional)",
         ["SourceTip"] = "Example: wim:D:\\sources\\install.wim:1",
         ["LimitAccess"] = "No Windows Update (/LimitAccess)",
-        ["Credit"] = "Program realizat de Pasare Cristian · v{0}",
+        ["Credit"] = "Program created by Pasare Cristian · v{0}",
         ["Cancel"] = "Stop",
         ["Save"] = "Save log",
         ["Clear"] = "Clear",
