@@ -1,8 +1,10 @@
 name: Release
 
-# Builds the Windows executables and attaches them to a GitHub Release
-# whenever a version tag (v1.2.3) is pushed.
+# Builds the Windows executables and attaches them to a GitHub Release.
+# Start it from the Actions tab ("Run workflow"): the release is named after
+# the <Version> in DismRepairCenter.csproj. Pushing a tag v1.2.3 also works.
 on:
+  workflow_dispatch:
   push:
     tags: ['v*']
 
@@ -50,4 +52,6 @@ jobs:
 
           Windows 10 / 11 (x64). Aplicatia cere drepturi de administrator la pornire. / The app asks for administrator rights at startup.
           "@
-          gh release create $env:GITHUB_REF_NAME dist/DismRepairCenter-portable.exe dist/DismRepairCenter-net8.exe --title "DISM Repair Center $env:GITHUB_REF_NAME" --notes $notes
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $tag = $env:GITHUB_REF_NAME }
+          else { $tag = 'v' + ([xml](Get-Content DismRepairCenter.csproj)).Project.PropertyGroup.Version }
+          gh release create $tag dist/DismRepairCenter-portable.exe dist/DismRepairCenter-net8.exe --target $env:GITHUB_SHA --title "DISM Repair Center $tag" --notes $notes
