@@ -18,8 +18,8 @@ Aplicația cere drepturi de administrator la pornire (UAC), fiindcă DISM și SF
 | Verificare rapidă | `DISM /Online /Cleanup-Image /CheckHealth` |
 | Scanare | `DISM /Online /Cleanup-Image /ScanHealth` |
 | Reparare | `DISM /Online /Cleanup-Image /RestoreHealth` (+ `/Source`, `/LimitAccess`) |
-| Analiză | `DISM /Online /Cleanup-Image /AnalyzeComponentStore` |
-| Curățare | `DISM /Online /Cleanup-Image /StartComponentCleanup` (+ `/ResetBase`) |
+| Analiză WinSxS | `DISM /Online /Cleanup-Image /AnalyzeComponentStore` |
+| Curățare WinSxS | `DISM /Online /Cleanup-Image /StartComponentCleanup` (+ `/ResetBase`) |
 | SFC reparare | `sfc /scannow` |
 | SFC verificare | `sfc /verifyonly` |
 | SFC fișier | `sfc /scanfile=<fișier>` |

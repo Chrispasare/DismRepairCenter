@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.Win32;
 
@@ -17,11 +16,11 @@ public partial class MainWindow : Window
 
     static readonly Act[] Acts =
     {
-        new("check",     "health", "DISM /Online /Cleanup-Image /CheckHealth"),
-        new("scan",      "health", "DISM /Online /Cleanup-Image /ScanHealth"),
-        new("restore",   "health", "DISM /Online /Cleanup-Image /RestoreHealth"),
-        new("analyze",   "store",  "DISM /Online /Cleanup-Image /AnalyzeComponentStore"),
-        new("cleanup",   "store",  "DISM /Online /Cleanup-Image /StartComponentCleanup"),
+        new("check",     "dism",   "DISM /Online /Cleanup-Image /CheckHealth"),
+        new("scan",      "dism",   "DISM /Online /Cleanup-Image /ScanHealth"),
+        new("restore",   "dism",   "DISM /Online /Cleanup-Image /RestoreHealth"),
+        new("analyze",   "dism",   "DISM /Online /Cleanup-Image /AnalyzeComponentStore"),
+        new("cleanup",   "dism",   "DISM /Online /Cleanup-Image /StartComponentCleanup"),
         new("sfc",       "sfc",    "sfc /scannow"),
         new("sfcverify", "sfc",    "sfc /verifyonly"),
         new("sfcfile",   "sfc",    "sfc /scanfile=<file>"),
@@ -73,17 +72,17 @@ public partial class MainWindow : Window
         ExitBtn.Content = Loc.T("Exit");
         Status.Text = Loc.T(_statusKey, _statusArgs);
 
+        // trei coloane: DISM | SFC | pachete și jurnale; descrierea și comanda sunt în tooltip
         Actions.Children.Clear();
         var muted = (Brush)FindResource("Muted");
         foreach (var g in Acts.GroupBy(a => a.Group))
         {
-            Actions.Children.Add(new TextBlock
+            var col = new StackPanel { VerticalAlignment = VerticalAlignment.Top };
+            col.Children.Add(new TextBlock
             {
                 Text = Loc.T("G_" + g.Key), FontWeight = FontWeights.SemiBold, FontSize = 10,
-                Foreground = muted, Margin = new Thickness(3, 5, 0, 2)
+                Foreground = muted, Margin = new Thickness(3, 5, 0, 1), TextTrimming = TextTrimming.CharacterEllipsis
             });
-            // butoane compacte pe două coloane; descrierea și comanda sunt în tooltip
-            var grid = new UniformGrid { Columns = 2 };
             foreach (var a in g)
             {
                 var b = new Button
@@ -93,9 +92,9 @@ public partial class MainWindow : Window
                     ToolTip = Loc.T("D_" + a.Id) + Environment.NewLine + a.Hint
                 };
                 b.Click += Action_Click;
-                grid.Children.Add(b);
+                col.Children.Add(b);
             }
-            Actions.Children.Add(grid);
+            Actions.Children.Add(col);
         }
     }
 
