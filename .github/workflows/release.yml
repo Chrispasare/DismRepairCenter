@@ -1,0 +1,53 @@
+name: Release
+
+# Builds the Windows executables and attaches them to a GitHub Release
+# whenever a version tag (v1.2.3) is pushed.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish portable (self-contained, no .NET needed)
+        run: >
+          dotnet publish DismRepairCenter.csproj -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true -p:DebugType=none -o out/portable
+
+      - name: Publish small (needs .NET 8 Desktop Runtime)
+        run: >
+          dotnet publish DismRepairCenter.csproj -c Release -r win-x64 --self-contained false
+          -p:PublishSingleFile=true -p:DebugType=none -o out/small
+
+      - name: Collect files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist | Out-Null
+          Copy-Item out/portable/DismRepairCenter.exe dist/DismRepairCenter-portable.exe
+          Copy-Item out/small/DismRepairCenter.exe dist/DismRepairCenter-net8.exe
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - name: Create release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $notes = @"
+          **DismRepairCenter-portable.exe** - portabil, nu necesita instalare si nici .NET. / Portable, no install and no .NET required.
+
+          **DismRepairCenter-net8.exe** - varianta mica, necesita .NET 8 Desktop Runtime. / Small build, requires the .NET 8 Desktop Runtime.
+
+          Windows 10 / 11 (x64). Aplicatia cere drepturi de administrator la pornire. / The app asks for administrator rights at startup.
+          "@
+          gh release create $env:GITHUB_REF_NAME dist/DismRepairCenter-portable.exe dist/DismRepairCenter-net8.exe --title "DISM Repair Center $env:GITHUB_REF_NAME" --notes $notes

@@ -2,6 +2,13 @@
 
 Interfață grafică pentru DISM și SFC pe Windows 10 / 11 (C# / .NET 8 WPF). Program realizat de Pasare Cristian.
 
+## Descărcare
+
+Din pagina [Releases](https://github.com/Chrispasare/DismRepairCenter/releases/latest):
+
+- `DismRepairCenter-portable.exe` — portabil: un singur fișier, fără instalare și fără .NET.
+- `DismRepairCenter-net8.exe` — varianta mică, necesită .NET 8 Desktop Runtime.
+
 ## Compilare
 
 1. Ai nevoie de .NET 8 SDK (`winget install Microsoft.DotNet.SDK.8`).
@@ -34,6 +41,8 @@ Interfață în română și engleză (butonul RO/EN din dreapta sus).
 # DISM Repair Center (English)
 
 A GUI for DISM and SFC on Windows 10 / 11 (C# / .NET 8 WPF).
+
+Download: get `DismRepairCenter-portable.exe` (single file, no install, no .NET needed) from the [Releases](https://github.com/Chrispasare/DismRepairCenter/releases/latest) page.
 
 Build: install the .NET 8 SDK, then run `build.cmd` (output: `publish\DismRepairCenter.exe`) or `dotnet run -c Release`.
 The app requests administrator rights at startup. Use the RO/EN button in the top-right corner to switch language.
