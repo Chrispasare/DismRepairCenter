@@ -20,9 +20,9 @@ Aplicația cere drepturi de administrator la pornire (UAC), fiindcă DISM și SF
 | Reparare | `DISM /Online /Cleanup-Image /RestoreHealth` (+ `/Source`, `/LimitAccess`) |
 | Analiză | `DISM /Online /Cleanup-Image /AnalyzeComponentStore` |
 | Curățare | `DISM /Online /Cleanup-Image /StartComponentCleanup` (+ `/ResetBase`) |
-| SFC scanare + reparare | `sfc /scannow` |
-| SFC doar verificare | `sfc /verifyonly` |
-| SFC pe un fișier | `sfc /scanfile=<fișier>` |
+| SFC reparare | `sfc /scannow` |
+| SFC verificare | `sfc /verifyonly` |
+| SFC fișier | `sfc /scanfile=<fișier>` |
 | Raport SFC | liniile `[SR]` din CBS.log, salvate pe Desktop |
 | Instalare pachet | `DISM /Online /Add-Package /PackagePath:<.cab/.msu> /NoRestart` |
 | Jurnal DISM / CBS | deschide `dism.log` / `CBS.log` |

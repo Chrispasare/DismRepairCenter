@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.Win32;
 
@@ -42,6 +43,10 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        // nu depăși niciodată zona de lucru a ecranului (laptopuri cu scalare mare)
+        var wa = SystemParameters.WorkArea;
+        Width = Math.Min(Width, wa.Width * 0.92);
+        Height = Math.Min(Height, wa.Height * 0.92);
         OsInfo.Text = OsDescription();
         ApplyLanguage();
     }
@@ -50,16 +55,18 @@ public partial class MainWindow : Window
 
     void ApplyLanguage()
     {
-        Subtitle.Text = Loc.T("Subtitle");
+        var v = Assembly.GetExecutingAssembly().GetName().Version;
+        Subtitle.Text = Loc.T("Credit", v is null ? "1.0" : $"{v.Major}.{v.Minor}.{v.Build}");
+        Subtitle.ToolTip = Loc.T("Subtitle");
         LangBtn.Content = Loc.Lang == "ro" ? "EN" : "RO";
         FullTitle.Text = Loc.T("B_full");
-        FullDesc.Text = Loc.T("D_full");
-        OptTitle.Text = Loc.T("Options");
+        FullBtn.ToolTip = Loc.T("D_full");
+        OptExpander.Header = Loc.T("Options");
         ResetBaseTxt.Text = Loc.T("ResetBase");
         SourceLbl.Text = Loc.T("Source");
         LimitAccessTxt.Text = Loc.T("LimitAccess");
-        var v = Assembly.GetExecutingAssembly().GetName().Version;
-        Credit.Text = Loc.T("Credit", v is null ? "1.0" : $"{v.Major}.{v.Minor}.{v.Build}");
+        ResetBase.ToolTip = Loc.T("ResetBaseTip");
+        SourceLbl.ToolTip = SourceBox.ToolTip = Loc.T("SourceTip");
         CancelBtn.Content = Loc.T("Cancel");
         SaveBtn.Content = Loc.T("Save");
         ClearBtn.Content = Loc.T("Clear");
@@ -72,22 +79,23 @@ public partial class MainWindow : Window
         {
             Actions.Children.Add(new TextBlock
             {
-                Text = Loc.T("G_" + g.Key), FontWeight = FontWeights.SemiBold, FontSize = 11,
-                Foreground = muted, Margin = new Thickness(2, 6, 0, 6)
+                Text = Loc.T("G_" + g.Key), FontWeight = FontWeights.SemiBold, FontSize = 10,
+                Foreground = muted, Margin = new Thickness(3, 5, 0, 2)
             });
+            // butoane compacte pe două coloane; descrierea și comanda sunt în tooltip
+            var grid = new UniformGrid { Columns = 2 };
             foreach (var a in g)
             {
-                var sp = new StackPanel();
-                sp.Children.Add(new TextBlock { Text = Loc.T("B_" + a.Id), FontWeight = FontWeights.SemiBold });
-                sp.Children.Add(new TextBlock
+                var b = new Button
                 {
-                    Text = Loc.T("D_" + a.Id), Foreground = muted, FontSize = 12,
-                    TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0)
-                });
-                var b = new Button { Style = (Style)FindResource("ActionButton"), Tag = a.Id, Content = sp, ToolTip = a.Hint };
+                    Style = (Style)FindResource("ActionButton"), Tag = a.Id,
+                    Content = new TextBlock { Text = Loc.T("B_" + a.Id), TextTrimming = TextTrimming.CharacterEllipsis },
+                    ToolTip = Loc.T("D_" + a.Id) + Environment.NewLine + a.Hint
+                };
                 b.Click += Action_Click;
-                Actions.Children.Add(b);
+                grid.Children.Add(b);
             }
+            Actions.Children.Add(grid);
         }
     }
 
